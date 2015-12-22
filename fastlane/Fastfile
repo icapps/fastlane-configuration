@@ -43,7 +43,8 @@ end
 ###################
 
 lane :hockey do
-  build # Run the build lane.
+  bump_version # Run the bump_version lane.
+  build        # Run the build lane.
   tests        # Run the tests lane.
 
   # Upload the application to HockeyApp. You can find more information on the used keys
@@ -62,7 +63,8 @@ end
 #######################
 
 lane :testflight do
-  build # Run the build lane.
+  bump_version # Run the bump_version lane.
+  build        # Run the build lane.
   tests        # Run the tests lane.
 
   # Upload the application to Apple's Testflight.
@@ -104,6 +106,14 @@ private_lane :tests do
     clean:         true,                                         # optional, Clean the project before building.
     destination:   'platform=iOS Simulator,name=iPhone 6,OS=9.0' # optional, define on which device to run.
   )
+end
+
+private_lane :bump_version do
+  # Increment the build version number, commit the bump and push the tag.
+  increment_build_number
+  commit_version_bump
+  add_git_tag
+  push_to_git_remote
 end
 
 #################
