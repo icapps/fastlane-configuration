@@ -1,6 +1,27 @@
 # Fix the fastlane version so that we don't get any surprises while deploying.
 fastlane_version '1.48.0'
 
+#############################
+### Environment variables ###
+#############################
+
+# The environment variables below can also be setup in Jenkins. If so the lines below
+# don't have to be set in this Fastfile.
+
+# You have to set your iTunes Connect username and password in order to authenticate 
+# with Apple's iTunes Connect portal so you can upload the build to TestFlight.
+ENV['PILOT_USERNAME'] = 'Your iTunes Connect username'
+ENV['PILOT_PASSWORD'] = 'Your iTunes Connect password'
+
+# You have to set the HockeyApp token in order to authenticate with HockeyApp.
+ENV['FL_HOCKEY_API_TOKEN'] = 'Your HockeyApp API token'
+
+# You have to set your iTunes Connect username and password in order to authenticate 
+# with Apple's iTunes Connect portal. This will usually be the same as your PILOT
+# credentials.
+ENV['FASTLANE_USERNAME'] = ENV['PILOT_USERNAME']
+ENV['FASTLANE_PASSWORD'] = ENV['PILOT_PASSWORD']
+
 ###############
 ### CI LANE ###
 ###############
@@ -17,7 +38,6 @@ lane :hockey do
   # below in the HockeyApp documentation. 
   # (http://support.hockeyapp.net/kb/api/api-versions#upload-version)
   hockey(
-    api_token: 'your HockeyApp API token',
     ipa:       './location/of/application.ipa', # optional, will try to locate the correct ipa file.
     notes:     'What\'s new?',                  # optional, will be empty otherwise
     tags:      'tags, on, hockey',              # optional, will be empty otherwise
@@ -30,4 +50,10 @@ end
 #######################
 
 lane :testflight do
+  # Upload the application to Apple's Testflight.
+  pilot(
+    app_identifier:  'com.icapps.app',
+    ipa:             './location/of/application.ipa', # optional, will try to locate the correct ipa file.
+    skip_submission: true                             # Don't automagically submit for review.
+  )
 end
