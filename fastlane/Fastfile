@@ -27,6 +27,7 @@ ENV['FASTLANE_PASSWORD'] = ENV['PILOT_PASSWORD']
 ###############
 
 lane :ci do
+  build # Run the build lane.
 end
 
 ###################
@@ -34,6 +35,8 @@ end
 ###################
 
 lane :hockey do
+  build # Run the build lane.
+
   # Upload the application to HockeyApp. You can find more information on the used keys
   # below in the HockeyApp documentation. 
   # (http://support.hockeyapp.net/kb/api/api-versions#upload-version)
@@ -50,10 +53,29 @@ end
 #######################
 
 lane :testflight do
+  build # Run the build lane.
+
   # Upload the application to Apple's Testflight.
   pilot(
     app_identifier:  'com.icapps.app',
     ipa:             './location/of/application.ipa', # optional, will try to locate the correct ipa file.
     skip_submission: true                             # Don't automagically submit for review.
+  )
+end
+
+#####################
+### PRIVATE LANES ###
+#####################
+
+private_lane :build do
+  # Build the application.
+  gym(
+    workspace:            'Project.xcworkspace',           # optional, the workspace to build.
+    scheme:               'Application Scheme',            # optional, the scheme to build.
+    configuration:        'Release',                       # optional, the configuration to build.
+    clean:                true,                            # optional, Clean the project before building.
+    output_name:          './location/of/application.ipa', # optional, define the location of the ipa build.
+    output_directory:     './location',                    # optional, the output directory to build.
+    use_legacy_build_api: true                             # Needs to be set, because of a open radar.
   )
 end
