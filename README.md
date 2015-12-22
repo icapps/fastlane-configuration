@@ -1,4 +1,4 @@
-# Fastlane Example configuration
+# Fastlane configuration
 
 This is an example configuration of how we configure our [Fastlane](http://fastlane.tools) setup.
 
