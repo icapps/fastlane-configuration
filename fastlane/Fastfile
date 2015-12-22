@@ -8,7 +8,7 @@ fastlane_version '1.48.0'
 # The environment variables below can also be setup in Jenkins. If so the lines below
 # don't have to be set in this Fastfile.
 
-# You have to set your iTunes Connect username and password in order to authenticate 
+# You have to set your iTunes Connect username and password in order to authenticate
 # with Apple's iTunes Connect portal so you can upload the build to TestFlight.
 ENV['PILOT_USERNAME'] = 'Your iTunes Connect username'
 ENV['PILOT_PASSWORD'] = 'Your iTunes Connect password'
@@ -19,7 +19,7 @@ ENV['FL_HOCKEY_API_TOKEN'] = 'Your HockeyApp API token'
 # The incoming webhook for our iCapps Slack account.
 ENV['SLACK_URL'] = 'https://hooks.slack.com/services/...'
 
-# You have to set your iTunes Connect username and password in order to authenticate 
+# You have to set your iTunes Connect username and password in order to authenticate
 # with Apple's iTunes Connect portal. This will usually be the same as your PILOT
 # credentials.
 ENV['FASTLANE_USERNAME'] = ENV['PILOT_USERNAME']
@@ -31,6 +31,7 @@ ENV['FASTLANE_PASSWORD'] = ENV['PILOT_PASSWORD']
 
 lane :ci do
   build # Run the build lane.
+  tests        # Run the tests lane.
 end
 
 ###################
@@ -39,9 +40,10 @@ end
 
 lane :hockey do
   build # Run the build lane.
+  tests        # Run the tests lane.
 
   # Upload the application to HockeyApp. You can find more information on the used keys
-  # below in the HockeyApp documentation. 
+  # below in the HockeyApp documentation.
   # (http://support.hockeyapp.net/kb/api/api-versions#upload-version)
   hockey(
     ipa:       './location/of/application.ipa', # optional, will try to locate the correct ipa file.
@@ -57,6 +59,7 @@ end
 
 lane :testflight do
   build # Run the build lane.
+  tests        # Run the tests lane.
 
   # Upload the application to Apple's Testflight.
   pilot(
@@ -80,6 +83,17 @@ private_lane :build do
     output_name:          './location/of/application.ipa', # optional, define the location of the ipa build.
     output_directory:     './location',                    # optional, the output directory to build.
     use_legacy_build_api: true                             # Needs to be set, because of a open radar.
+  )
+end
+
+private_lane :tests do
+  # Run the application tests.
+  xctest(
+    workspace:     'Project.xcworkspace',                        # optional, the workspace to build.
+    scheme:        'Application Scheme',                         # optional, the scheme to build.
+    configuration: 'Release',                                    # optional, the configuration to build.
+    clean:         true,                                         # optional, Clean the project before building.
+    destination:   'platform=iOS Simulator,name=iPhone 6,OS=9.0' # optional, define on which device to run.
   )
 end
 
