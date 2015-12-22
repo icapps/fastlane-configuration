@@ -1,0 +1,2 @@
+# Fix the fastlane version so that we don't get any surprises while deploying.
+fastlane_version '1.48.0'
