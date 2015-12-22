@@ -16,6 +16,10 @@ ENV['PILOT_PASSWORD'] = 'Your iTunes Connect password'
 # You have to set the HockeyApp token in order to authenticate with HockeyApp.
 ENV['FL_HOCKEY_API_TOKEN'] = 'Your HockeyApp API token'
 
+# The Splunk environment variables to authenticate.
+ENV['FL_SPLUNKMINT_API_KEY'] = 'Your Splunk API key'
+ENV['FL_SPLUNKMINT_API_TOKEN'] = 'Your Splunk API token'
+
 # The incoming webhook for our iCapps Slack account.
 ENV['SLACK_URL'] = 'https://hooks.slack.com/services/...'
 
@@ -66,6 +70,11 @@ lane :testflight do
     app_identifier:  'com.icapps.app',
     ipa:             './location/of/application.ipa', # optional, will try to locate the correct ipa file.
     skip_submission: true                             # Don't automagically submit for review.
+  )
+
+  # Upload the dSYM to Splunk.
+  splunkmint(
+    dsym: './location/of/application.dSYM.zip'
   )
 end
 
