@@ -13,6 +13,16 @@ end
 ###################
 
 lane :hockey do
+  # Upload the application to HockeyApp. You can find more information on the used keys
+  # below in the HockeyApp documentation. 
+  # (http://support.hockeyapp.net/kb/api/api-versions#upload-version)
+  hockey(
+    api_token: 'your HockeyApp API token',
+    ipa:       './location/of/application.ipa', # optional, will try to locate the correct ipa file.
+    notes:     'What\'s new?',                  # optional, will be empty otherwise
+    tags:      'tags, on, hockey',              # optional, will be empty otherwise
+    notify:    '1'                              # optional, will be 0 otherwise
+  )
 end
 
 #######################
