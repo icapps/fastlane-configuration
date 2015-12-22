@@ -16,6 +16,9 @@ ENV['PILOT_PASSWORD'] = 'Your iTunes Connect password'
 # You have to set the HockeyApp token in order to authenticate with HockeyApp.
 ENV['FL_HOCKEY_API_TOKEN'] = 'Your HockeyApp API token'
 
+# The incoming webhook for our iCapps Slack account.
+ENV['SLACK_URL'] = 'https://hooks.slack.com/services/...'
+
 # You have to set your iTunes Connect username and password in order to authenticate 
 # with Apple's iTunes Connect portal. This will usually be the same as your PILOT
 # credentials.
@@ -77,5 +80,28 @@ private_lane :build do
     output_name:          './location/of/application.ipa', # optional, define the location of the ipa build.
     output_directory:     './location',                    # optional, the output directory to build.
     use_legacy_build_api: true                             # Needs to be set, because of a open radar.
+  )
+end
+
+#################
+### Callbacks ###
+#################
+
+# Post a notification to Slack every time a lane was successful.
+after_all do |lane|
+  slack(
+    channel:          '#slack-room',
+    success:           true
+    default_payloads: [:lane, :test_result]
+  )
+end
+
+# When an error occurs we post a failure notification to Slack.
+error do |lane, exception|
+  slack(
+    message:          exception.message,
+    channel:          '#slack-room',
+    success:           true
+    default_payloads: [:lane, :test_result]
   )
 end
