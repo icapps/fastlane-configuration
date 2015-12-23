@@ -134,7 +134,7 @@ error do |lane, exception|
   slack(
     message:          exception.message,
     channel:          '#slack-room',
-    success:           true
+    success:           false
     default_payloads: [:lane, :test_result]
   )
 end
