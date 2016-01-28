@@ -127,6 +127,7 @@ after_all do |lane|
     success:           true
     default_payloads: [:lane, :test_result]
   )
+  clean_build_artifacts
 end
 
 # When an error occurs we post a failure notification to Slack.
@@ -137,4 +138,5 @@ error do |lane, exception|
     success:           false
     default_payloads: [:lane, :test_result]
   )
+  clean_build_artifacts
 end
