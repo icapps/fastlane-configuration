@@ -87,8 +87,8 @@ end
 private_lane :build do
   # Build the application.
   gym(
-    workspace:            'Project.xcworkspace',           # optional, the workspace to build.
-    scheme:               'Application Scheme',            # optional, the scheme to build.
+    workspace:     @workspace,                             # optional, the workspace to build.
+    scheme:        @scheme,                                # optional, the scheme to build.
     configuration:        'Release',                       # optional, the configuration to build.
     clean:                true,                            # optional, Clean the project before building.
     output_name:          './location/of/application.ipa', # optional, define the location of the ipa build.
@@ -99,12 +99,9 @@ end
 
 private_lane :tests do
   # Run the application tests.
-  xctest(
-    workspace:     'Project.xcworkspace',                        # optional, the workspace to build.
-    scheme:        'Application Scheme',                         # optional, the scheme to build.
-    configuration: 'Release',                                    # optional, the configuration to build.
-    clean:         true,                                         # optional, Clean the project before building.
-    destination:   'platform=iOS Simulator,name=iPhone 6,OS=9.0' # optional, define on which device to run.
+  scan(
+    workspace:     @workspace,                                   # optional, the workspace to build.
+    scheme:        @scheme,                                      # optional, the scheme to build.
   )
 end
 
@@ -114,6 +111,11 @@ private_lane :bump_version do
   commit_version_bump
   add_git_tag
   push_to_git_remote
+end
+
+private_lane :properties do
+  @workspace = 'Project.xcworkspace'
+  @scheme = 'Application Scheme'
 end
 
 #################
