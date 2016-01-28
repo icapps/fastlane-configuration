@@ -34,6 +34,9 @@ ENV['FASTLANE_PASSWORD'] = ENV['PILOT_PASSWORD']
 ###############
 
 lane :ci do
+  @configuration = "Accept"
+
+  properties # Set the right properties
   build # Run the build lane.
   tests        # Run the tests lane.
 end
@@ -43,6 +46,9 @@ end
 ###################
 
 lane :hockey do
+  @configuration = "Release"
+
+  properties # Set the right properties
   bump_version # Run the bump_version lane.
   build        # Run the build lane.
   tests        # Run the tests lane.
@@ -51,7 +57,6 @@ lane :hockey do
   # below in the HockeyApp documentation.
   # (http://support.hockeyapp.net/kb/api/api-versions#upload-version)
   hockey(
-    ipa:       './location/of/application.ipa', # optional, will try to locate the correct ipa file.
     notes:     'What\'s new?',                  # optional, will be empty otherwise
     tags:      'tags, on, hockey',              # optional, will be empty otherwise
     notify:    '1'                              # optional, will be 0 otherwise
@@ -63,21 +68,21 @@ end
 #######################
 
 lane :testflight do
+  @configuration = "Production"
+
+  properties # Set the right properties
   bump_version # Run the bump_version lane.
   build        # Run the build lane.
   tests        # Run the tests lane.
 
   # Upload the application to Apple's Testflight.
   pilot(
-    app_identifier:  'com.icapps.app',
-    ipa:             './location/of/application.ipa', # optional, will try to locate the correct ipa file.
+    app_identifier:  @app_identifier,
     skip_submission: true                             # Don't automagically submit for review.
   )
 
   # Upload the dSYM to Splunk.
-  splunkmint(
-    dsym: './location/of/application.dSYM.zip'
-  )
+  splunkmint
 end
 
 #####################
@@ -87,14 +92,11 @@ end
 private_lane :build do
   # Build the application.
   gym(
-    workspace:     @workspace,                             # optional, the workspace to build.
-    scheme:        @scheme,                                # optional, the scheme to build.
-    configuration:        'Release',                       # optional, the configuration to build.
-    clean:                true,                            # optional, Clean the project before building.
-    output_name:          './location/of/application.ipa', # optional, define the location of the ipa build.
-    output_directory:     './location',                    # optional, the output directory to build.
-    use_legacy_build_api: true,                             # Needs to be set, because of a open radar.
-
+    workspace:             @workspace,     # optional, the workspace to build.
+    scheme:                @scheme,        # optional, the scheme to build.
+    configuration:         @configuration,      # optional, the configuration to build.
+    clean:                 true,           # optional, Clean the project before building.
+    use_legacy_build_api:  true,           # Needs to be set, because of a open radar.
   )
 end
 
@@ -117,6 +119,7 @@ end
 private_lane :properties do
   @workspace = 'Project.xcworkspace'
   @scheme = 'Application Scheme'
+  @app_identifier = 'com.icapps.app'
 end
 
 #################
