@@ -93,7 +93,8 @@ private_lane :build do
     clean:                true,                            # optional, Clean the project before building.
     output_name:          './location/of/application.ipa', # optional, define the location of the ipa build.
     output_directory:     './location',                    # optional, the output directory to build.
-    use_legacy_build_api: true                             # Needs to be set, because of a open radar.
+    use_legacy_build_api: true,                             # Needs to be set, because of a open radar.
+
   )
 end
 
