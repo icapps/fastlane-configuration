@@ -37,8 +37,8 @@ lane :ci do
   @configuration = "Accept"
 
   properties # Set the right properties
-  build # Run the build lane.
-  tests        # Run the tests lane.
+  build      # Run the build lane.
+  tests      # Run the tests lane.
 end
 
 ###################
@@ -48,7 +48,7 @@ end
 lane :hockey do
   @configuration = "Release"
 
-  properties # Set the right properties
+  properties   # Set the right properties
   bump_version # Run the bump_version lane.
   build        # Run the build lane.
   tests        # Run the tests lane.
@@ -116,10 +116,18 @@ private_lane :bump_version do
   push_to_git_remote
 end
 
+# Configure the properties.
 private_lane :properties do
   @workspace = 'Project.xcworkspace'
   @scheme = 'Application Scheme'
   @app_identifier = 'com.icapps.app'
+end
+
+private_lane :fetch_translations do
+  update_translations(
+    project_root:   './location/of/project/root', # optional, the directory where the .translations file resides.
+    commit_message: 'Your custom commit message'  # optional, your custom commit message.
+  )
 end
 
 #################
