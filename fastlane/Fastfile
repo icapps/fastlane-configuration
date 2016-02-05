@@ -29,6 +29,12 @@ ENV['SLACK_URL'] = 'https://hooks.slack.com/services/...'
 ENV['FASTLANE_USERNAME'] = ENV['PILOT_USERNAME']
 ENV['FASTLANE_PASSWORD'] = ENV['PILOT_PASSWORD']
 
+# Set the following environment variables if you want to run tests on the
+# AWS device farm.
+ENV['AWS_ACCESS_KEY_ID']     = 'Your AWS access key id'
+ENV['AWS_SECRET_ACCESS_KEY'] = 'Your AWS secret access key'
+ENV['AWS_REGION']            = 'Your AWS region'
+
 ###############
 ### CI LANE ###
 ###############
@@ -94,7 +100,7 @@ private_lane :build do
   gym(
     workspace:             @workspace,     # optional, the workspace to build.
     scheme:                @scheme,        # optional, the scheme to build.
-    configuration:         @configuration,      # optional, the configuration to build.
+    configuration:         @configuration, # optional, the configuration to build.
     clean:                 true,           # optional, Clean the project before building.
     use_legacy_build_api:  true,           # Needs to be set, because of a open radar.
   )
@@ -105,6 +111,15 @@ private_lane :tests do
   scan(
     workspace:     @workspace,                                   # optional, the workspace to build.
     scheme:        @scheme,                                      # optional, the scheme to build.
+  )
+
+  # Run the tests on the AWS device farm.
+  aws_device_farm(
+   name:                'Project name',       # The project name on your AWS device farm.
+   binary_path:         'project.apk',        # The application binary.
+   test_binary_path:    'project-test.apk',   # optional, pass the application binary to test.
+   device_pool:         'Project Device Pool' # The device pool you want to run.
+   wait_for_completion: true                  # optional, set to false when you want to skip waiting for test completion.
   )
 end
 
