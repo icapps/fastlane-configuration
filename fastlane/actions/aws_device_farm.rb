@@ -1,3 +1,5 @@
+require 'aws-sdk'
+
 module Fastlane
   module Actions
     class AwsDeviceFarmAction < Action
