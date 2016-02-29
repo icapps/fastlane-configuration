@@ -26,6 +26,7 @@ Performs the following tasks:
 
 - Build the application.
 - Run the tests.
+- Run the tests on your AWS Device Farm.
 - Send notifications to Slack.
 
 ### TestFlight lane
