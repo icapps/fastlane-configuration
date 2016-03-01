@@ -55,7 +55,7 @@ module Fastlane
         if params[:wait_for_completion]
           Helper.log.info 'Waiting for the run to complete. ☕️'
           run = wait_for_run run
-          raise "#{run.message} 🙈" if run.result == 'ERRORED'
+          raise "#{run.message} 🙈" unless %w(PASSED WARNED).include? run.result
 
           Helper.log.info 'Successfully tested the application on the AWS device farm. ✅'.green
         else
