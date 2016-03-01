@@ -40,6 +40,7 @@ ENV['AWS_REGION']            = 'Your AWS region'
 ###############
 
 lane :ci do
+  @slack_jenkins_job = 'Jenkins Job Name - CI'
   @configuration = "Accept"
 
   properties # Set the right properties
@@ -52,6 +53,7 @@ end
 ###################
 
 lane :hockey do
+  @slack_jenkins_job = 'Jenkins Job Name - Release'
   @configuration = "Release"
 
   properties   # Set the right properties
@@ -166,7 +168,10 @@ error do |lane, exception|
     message:          exception.message,
     channel:          '#slack-room',
     success:           false
-    default_payloads: [:lane, :test_result]
+    default_payloads: [:lane, :test_result],
+    attachment_properties: {
+      title:      @slack_jenkins_job
+    }
   )
   clean_build_artifacts
 end
