@@ -157,7 +157,10 @@ after_all do |lane|
     message:          '#{lane[:name]} did run successful',
     channel:          '#slack-room',
     success:           true
-    default_payloads: [:lane, :test_result]
+    default_payloads: [:lane, :test_result],
+    attachment_properties: {
+      title:      @slack_jenkins_job
+    }
   )
   clean_build_artifacts
 end
