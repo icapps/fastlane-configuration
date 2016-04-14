@@ -148,7 +148,7 @@ private_lane :tests do
    name:                'Project name',       # The project name on your AWS device farm.
    binary_path:         'project.apk',        # The application binary.
    test_binary_path:    'project-test.apk',   # optional, pass the application binary to test.
-   device_pool:         'Project Device Pool' # The device pool you want to run.
+   device_pool:         'Project Device Pool', # The device pool you want to run.
    wait_for_completion: true                  # optional, set to false when you want to skip waiting for test completion.
   )
 end
@@ -184,7 +184,7 @@ after_all do |lane|
   slack(
     message:          '#{lane[:name]} did run successful',
     channel:          '#slack-room',
-    success:           true
+    success:           true,
     default_payloads: [:lane, :test_result],
     attachment_properties: {
       title:      @slack_jenkins_job
@@ -198,7 +198,7 @@ error do |lane, exception|
   slack(
     message:          exception.message,
     channel:          '#slack-room',
-    success:           false
+    success:           false,
     default_payloads: [:lane, :test_result],
     attachment_properties: {
       title:      @slack_jenkins_job
