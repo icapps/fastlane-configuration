@@ -42,6 +42,7 @@ Performs the following tasks:
 - Run the tests.
 - Upload the application to Apple TestFlight.
 - Upload the dSYM to Splunk.
+- Upload the dSYM to Crittercism.
 - Send notifications to Slack.
 
 ### HockeyApp lane
