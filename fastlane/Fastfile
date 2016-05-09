@@ -92,6 +92,14 @@ lane :testflight do
 
   # Upload the dSYM to Splunk.
   splunkmint
+
+  # Upload the dSYM to Crittercism
+  # For more info go to the Readme file
+  crittercism(
+    oauth_token: 'Your OAuth Token',
+    app_id: 'Your App ID',
+    dsym: 'Location of dSYM file'
+  )
 end
 
 ########################
