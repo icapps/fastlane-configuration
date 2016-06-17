@@ -35,6 +35,14 @@ ENV['AWS_ACCESS_KEY_ID']     = 'Your AWS access key id'
 ENV['AWS_SECRET_ACCESS_KEY'] = 'Your AWS secret access key'
 ENV['AWS_REGION']            = 'Your AWS region'
 
+# Release Typ for HockeyApp
+module HockeyReleaseType
+  ALPHA = '2'
+  BETA = '0'
+  STORE = '1'
+  ENTERPRISE = '3'
+end
+
 ###############
 ### CI LANE ###
 ###############
@@ -65,9 +73,10 @@ lane :hockey do
   # below in the HockeyApp documentation.
   # (http://support.hockeyapp.net/kb/api/api-versions#upload-version)
   hockey(
-    notes:     'What\'s new?',                  # optional, will be empty otherwise
-    tags:      'tags, on, hockey',              # optional, will be empty otherwise
-    notify:    '1'                              # optional, will be 0 otherwise
+    notes:          'What\'s new?',                  # optional, will be empty otherwise
+    tags:           'tags, on, hockey',              # optional, will be empty otherwise
+    notify:         '1'                              # optional, will be 0 otherwise
+    release_type:   HockeyReleaseType::ALPHA
   )
 end
 
