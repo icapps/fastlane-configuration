@@ -58,6 +58,17 @@ Performs the following tasks:
 - Upload the application to HockeyApp.
 - Send notifications to Slack.
 
+## Remarks
+
+### 'pilot' team id
+
+When specifying the team_id parameter in the 'pilot' section of your fastfile, you can't use the team id as mentioned in the Apple Developer portal.
+The correct team id can be found as follows:
+
+- Login to itunesconnect (https://itunesconnect.apple.com/)
+- Get output (JSON) from (https://itunesconnect.apple.com/WebObjects/iTunesConnect.woa/ra/user/detail)
+- You can now get your iTunes Connect ids from the associatedAccounts array with the different contentProvider objects - the entry named contentProviderId reflects the iTunes Connect id, lookup for the name value to pick the correct one
+
 ## License
 
 Copyright (c) 2015 iCapps
