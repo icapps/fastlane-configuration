@@ -12,23 +12,23 @@ skip_docs
 #####################
 
 # Project configuration.
-workspace = 'Project.xcworkspace'
-project =   'Project.xcodeproj'
-scheme =    'Project Scheme'
+WORKSPACE = 'Project.xcworkspace'
+PROJECT =   'Project.xcodeproj'
+SCHEME =    'Project Scheme'
 
 # Hockey configuration.
-hockey_app_api_key = ENV['FL_HOCKEY_API_TOKEN']
-hockey_app_teams =   %w(1234)
+HOCKEY_APP_API_KEY = ENV['FL_HOCKEY_API_TOKEN']
+HOCKEY_APP_TEAMS =   %w(1234)
 
 # TestFlight configuration.
-testflight_identifier = 'com.icapps.app'
+TESTFLIGHT_IDENTIFIER = 'com.icapps.app'
 
 # Apteligent configuration.
-apteligent_app_id =      '123123123'
-apteligent_oauth_token = '123123123'
+APTELIGENT_APP_ID =      '123123123'
+APTELIGENT_OAUTH_TOKEN = '123123123'
 
 # Deployment configuration.
-slack_room = '#jenkins'
+SLACK_ROOM = '#jenkins'
 
 ####################
 ### PUBLIC LANES ###
@@ -80,8 +80,8 @@ end
 # Run the tests.
 private_lane :run_tests do |options|
   scan(
-    workspace:     workspace,
-    scheme:        scheme,
+    workspace:     WORKSPACE,
+    scheme:        SCHEME,
     clean:         true,
     configuration: 'Debug',
     device:        'iPad Air 2'
@@ -92,8 +92,8 @@ end
 # incorrect coverage overview.
 private_lane :run_coverage do
   xcov(
-    workspace:        workspace,
-    scheme:           scheme,
+    workspace:        WORKSPACE,
+    scheme:           SCHEME,
     exclude_targets:  %w(
       Stella.framework
       Nimble.framework
@@ -108,7 +108,7 @@ private_lane :commit_tag_and_push do
   # Persist the git changes.
   commit_version_bump(
     force:     true,
-    xcodeproj: project
+    xcodeproj: PROJECT
   )
   add_git_tag
   push_to_git_remote
@@ -117,8 +117,8 @@ end
 # Build application
 private_lane :build do |options|
   gym(
-    workspace:            workspace,
-    scheme:               scheme,
+    workspace:            WORKSPACE,
+    scheme:               SCHEME,
     configuration:        options[:configuration],
     use_legacy_build_api: true
   )
@@ -127,8 +127,8 @@ end
 # Upload the build to HockeyApp and open it up for the given teams.
 private_lane :upload_to_hockey do
   hockey(
-    api_token:    hockey_app_api_key,
-    teams:        hockey_app_teams.join(','),
+    api_token:    HOCKEY_APP_API_KEY,
+    teams:        HOCKEY_APP_TEAMS.join(','),
     status:       '2', # The status is available for download.
     release_type: '0' # We set the release type to be beta.
   )
@@ -137,7 +137,7 @@ end
 # Upload the build to TestFlight.
 private_lane :upload_to_testflight do
   pilot(
-    app_identifier:  testflight_identifier,
+    app_identifier:  TESTFLIGHT_IDENTIFIER,
     skip_submission: true # Don't automagically submit for review.
   )
 end
@@ -146,8 +146,8 @@ end
 private_lane :upload_to_apteligent do
   # Upload the dSYM to Apteligent, for more info go to the Readme file
   crittercism(
-    oauth_token: apteligent_oauth_token,
-    app_id:      apteligent_app_id
+    oauth_token: APTELIGENT_OAUTH_TOKEN,
+    app_id:      APTELIGENT_APP_ID
   )
 end
 
@@ -160,7 +160,7 @@ after_all do |lane|
   return unless if is_ci?
 
   slack(
-    channel:               slack_room,
+    channel:               SLACK_ROOM,
     success:               true,
     default_payloads:      [:lane, :test_result]
     attachment_properties: {
@@ -176,7 +176,7 @@ error do |lane, exception|
 
   slack(
     message:               exception.message,
-    channel:               slack_room,
+    channel:               SLACK_ROOM,
     success:               false,
     default_payloads:      [:lane, :test_result],
     attachment_properties: {
