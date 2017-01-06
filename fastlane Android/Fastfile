@@ -1,0 +1,104 @@
+# Fix the fastlane version so that we don't get any surprises while deploying.
+fastlane_version '2.5.0'
+
+# Don't generate README files.
+skip_docs
+
+# Set your JSON key file location.
+json_key_file "/path/to/your/downloaded/key.json"
+
+#####################
+### CONFIGURATION ###
+#####################
+
+# Hockey configuration.
+HOCKEY_APP_API_KEY = ENV['FL_HOCKEY_API_TOKEN']
+HOCKEY_APP_TEAMS =   %w(1234)
+
+# Google Play configuration.
+GOOGLE_PLAT_IDENTIFIER = 'com.icapps.app'
+
+# Deployment configuration.
+SLACK_ROOM = '#jenkins'
+
+####################
+### PUBLIC LANES ###
+####################
+
+# The beta lane deploys the appication to HockeyApp but prior to deploying there
+# are some other tasks executed like updating translations, incrementing the
+# build number...
+lane :beta do
+  # Configuration of the translations importer can be found in the
+  # `.translations` file in the root of the repository.
+  update_translations
+  # Build the application with the given configuration.
+  build(configuration: 'Beta')
+end
+
+########################
+### 🔑  PRIVATE LANES ###
+########################
+
+# Build application
+private_lane :build do |options|
+  gradle(
+    task:       options[:task], # The task you want to execute.
+    flavor:     options[:flavor], # The flavor you want the task for.
+    build_type: 'Release' # The build type you want the task for.
+  )
+end
+
+# Upload the build to HockeyApp and open it up for the given teams.
+private_lane :upload_to_hockey do
+  hockey(
+    api_token:    HOCKEY_APP_API_KEY,
+    teams:        HOCKEY_APP_TEAMS.join(','),
+    status:       '2', # The status is available for download.
+    release_type: '0' # We set the release type to be beta.
+  )
+end
+
+# Upload the build to Google Play.
+private_lane :upload_to_google_play do |options|
+  # Upload the apk to Google Play.
+  supply(
+    track: options[:track], # The track you want to publish.
+    package_name: GOOGLE_PLAY_IDENTIFIER
+  )
+end
+
+#################
+### CALLBACKS ###
+#################
+
+# Post a notification to Slack every time a lane was successful.
+after_all do |lane|
+  return unless if is_ci?
+
+  slack(
+    channel:               SLACK_ROOM,
+    success:               true,
+    default_payloads:      [:lane, :test_result]
+    attachment_properties: {
+      message: "#{last_git_commit[:author]} did an excelent job.",
+    }
+  )
+  clean_build_artifacts
+end
+
+# When an error occurs we post a failure notification to Slack.
+error do |lane, exception|
+  return unless if is_ci?
+
+  slack(
+    message:               exception.message,
+    channel:               SLACK_ROOM,
+    success:               false,
+    default_payloads:      [:lane, :test_result],
+    attachment_properties: {
+      title: "#{last_git_commit[:author]} broke all the things.",
+    }
+  )
+  clean_build_artifacts
+end

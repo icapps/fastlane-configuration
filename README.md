@@ -12,6 +12,9 @@ $ gem install fastlane
 
 Copy the fastlane folder from this repo to your project root, and start tweaking.
 
+There are currently 2 fastlane configuration available, one for iOS and one for
+Android. Please choose the one that interests you.
+
 ## Extra Information
 
 ### Apteligent
