@@ -12,65 +12,12 @@ $ gem install fastlane
 
 Copy the fastlane folder from this repo to your project root, and start tweaking.
 
-## Our configuration
-
-Our Fastlane configuration currently supports the following lanes.
-
-### CI lane
-
-Run the CI lane.
-
-    $ fastlane ci
-
-Performs the following tasks:
-
-- Build the application.
-- Run the tests.
-- Run the tests on your AWS Device Farm.
-- Send notifications to Slack.
-
-### TestFlight lane
-
-Run the TestFlight lane.
-
-    $ fastlane testflight
-
-Performs the following tasks:
-
-- Version bumping with tagging.
-- Build the application.
-- Run the tests.
-- Upload the application to Apple TestFlight.
-- Upload the dSYM to Splunk.
-- Upload the dSYM to Crittercism.
-- Send notifications to Slack.
-
-### HockeyApp lane
-
-Run the HockeyApp lane.
-
-    $ fastlane hockey
-
-Performs the following tasks:
-
-- Version bumping with tagging.
-- Build the application.
-- Run the tests.
-- Upload the application to HockeyApp.
-- Send notifications to Slack.
-
 ## Extra Information
 
-### Crittercism
+### Apteligent
 
-To obtain a OAuth Token for a application. You can run the following cURL request.
-
-    $ curl -X POST https://developers.crittercism.com/v1.0/token -u <Client ID> -d 'grant_type=password&username=<user e-mail>&password=<user-password>&scope=app%2F<app id>%2Fsymbols'
-
- - Client ID: Can be found [here](https://app.crittercism.com/developers/user-settings) (OAuth Client ID)
- - Username: You're Crittercism Email Address
- - Password: You're Crittercism password
- - App ID: The ID of you're application
+There is an Apteligent script available on our [Github](https://github.com/icapps/scripts/tree/master/ruby/generate_apteligent_token) where you can generate the
+correct authentication codes.
 
 ## License
 
