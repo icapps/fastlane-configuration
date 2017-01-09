@@ -64,7 +64,7 @@ lane :beta do
   upload_to_hockey
   # Upload the dSYM to Apteligent.
   upload_to_apteligent
-  # When everything succeeeds, commit and push the changes.
+  # When everything succeeds, commit and push the changes.
   commit_tag_and_push
 end
 
