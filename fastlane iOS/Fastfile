@@ -162,7 +162,7 @@ after_all do |lane|
   slack(
     channel:               SLACK_ROOM,
     success:               true,
-    default_payloads:      [:lane, :test_result]
+    default_payloads:      [:lane, :test_result],
     attachment_properties: {
       message: "#{last_git_commit[:author]} did an excelent job.",
     }
