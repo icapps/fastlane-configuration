@@ -68,9 +68,9 @@ lane :beta do
   commit_tag_and_push
 end
 
-########################
+#########################
 ### 🔑  PRIVATE LANES ###
-########################
+#########################
 
 private_lane :check_code_style do
   # Check if the code is according to our coding guidelines.
