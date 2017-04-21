@@ -7,6 +7,9 @@ xcode_select('/Applications/Xcode 8.2.app') if is_ci?
 # Don't generate README files.
 skip_docs
 
+# Clear derived data folder
+clear_derived_data if is_ci?
+
 #####################
 ### CONFIGURATION ###
 #####################
