@@ -72,7 +72,15 @@ lane :beta do
   # `.translations` file in the root of the repository.
   update_translations
   # Build the application with the given configuration.
-  build(configuration: 'Beta')
+  build(
+    configuration: 'Beta',
+    export_options: {
+      method: 'enterprise',
+      provisioningProfiles: {
+        "com.icapps.beta" => "Example Provisioning Profile Beta"
+      }
+    }
+  )
   # Upload the build to HockeyApp.
   upload_to_hockey
   # When everything succeeds, commit and push the changes.
@@ -131,7 +139,7 @@ private_lane :build do |options|
     workspace:            WORKSPACE,
     scheme:               SCHEME,
     configuration:        options[:configuration],
-    use_legacy_build_api: true
+    export_options:       options[:export_options]
   )
 end
 
