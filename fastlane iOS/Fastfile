@@ -1,14 +1,24 @@
 # Fix the fastlane version so that we don't get any surprises while deploying.
-fastlane_version '2.5.0'
+fastlane_version '2.65.0'
 
 # Select the correct version of Xcode we want to build with on Jenkins.
-xcode_select('/Applications/Xcode 8.2.app') if is_ci?
+xcode_select('/Applications/Xcode9.1.app') if is_ci?
+
+# Setup Jenkins
+setup_jenkins(result_bundle: false, output_directory: false)
+
+# Unlock the Keychain
+keychain_password = ENV['JENKINS_KEYCHAIN_PASSWORD'] if is_ci?
+unlock_keychain(path: 'login.keychain', password: keychain_password) if is_ci? && keychain_password
 
 # Don't generate README files.
 skip_docs
 
 # Clear derived data folder
 clear_derived_data if is_ci?
+
+# Install required provisioning profiles
+install_provisioning_profiles
 
 #####################
 ### CONFIGURATION ###
@@ -65,8 +75,6 @@ lane :beta do
   build(configuration: 'Beta')
   # Upload the build to HockeyApp.
   upload_to_hockey
-  # Upload the dSYM to Apteligent.
-  upload_to_apteligent
   # When everything succeeds, commit and push the changes.
   commit_tag_and_push
 end
@@ -142,15 +150,6 @@ private_lane :upload_to_testflight do
   pilot(
     app_identifier:  TESTFLIGHT_IDENTIFIER,
     skip_submission: true # Don't automagically submit for review.
-  )
-end
-
-# Upload the dSYM to Apteligent.
-private_lane :upload_to_apteligent do
-  # Upload the dSYM to Apteligent, for more info go to the Readme file
-  crittercism(
-    oauth_token: APTELIGENT_OAUTH_TOKEN,
-    app_id:      APTELIGENT_APP_ID
   )
 end
 
