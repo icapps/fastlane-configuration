@@ -18,7 +18,7 @@ skip_docs
 clear_derived_data if is_ci?
 
 # Install required provisioning profiles
-install_provisioning_profiles
+install_provisioning_profiles if is_ci?
 
 #####################
 ### CONFIGURATION ###
@@ -47,7 +47,7 @@ SLACK_ROOM = '#jenkins'
 ### PUBLIC LANES ###
 ####################
 
-# This lane is used for checking if your pull request's code is according to our 
+# This lane is used for checking if your pull request's code is according to our
 # coding guidelines and that the application's tests run.
 lane :pr do
   # Check the coding guidelines.
