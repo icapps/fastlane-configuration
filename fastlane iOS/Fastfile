@@ -1,11 +1,11 @@
 # Fix the fastlane version so that we don't get any surprises while deploying.
-fastlane_version '2.65.0'
+fastlane_version '2.68.0'
 
 # Select the correct version of Xcode we want to build with on Jenkins.
-xcode_select('/Applications/Xcode9.1.app') if is_ci?
+xcode_select('/Applications/Xcode9.2.app') if is_ci?
 
 # Setup Jenkins
-setup_jenkins(result_bundle: false, output_directory: false)
+setup_jenkins(result_bundle: false, output_directory: false) if is_ci?
 
 # Unlock the Keychain
 keychain_password = ENV['JENKINS_KEYCHAIN_PASSWORD'] if is_ci?
@@ -53,7 +53,7 @@ lane :pr do
   # Check the coding guidelines.
   check_code_style
   # Run the tests.
-  run_tests
+  test
   # Run the code coverage generation.
   run_coverage
 end
@@ -63,7 +63,7 @@ end
 # build number...
 lane :beta do
   # Run the tests.
-  run_tests
+  test
   # We reset the git repository because the tests could update some files.
   reset_git_repo force: true
   # We increment the build number without commiting.
@@ -74,15 +74,34 @@ lane :beta do
   # Build the application with the given configuration.
   build(
     configuration: 'Beta',
-    export_options: {
-      method: 'enterprise',
-      provisioningProfiles: {
-        "com.icapps.beta" => "Example Provisioning Profile Beta"
-      }
-    }
+    export_options: export_options_for :beta
   )
   # Upload the build to HockeyApp.
   upload_to_hockey
+  # When everything succeeds, commit and push the changes.
+  commit_tag_and_push
+end
+
+# The appstore lane deploys the appication to TestFlight but prior to deploying there
+# are some other tasks executed like updating translations, incrementing the
+# build number...
+lane :appstore do
+  # Run the tests.
+  test
+  # We reset the git repository because the tests could update some files.
+  reset_git_repo force: true
+  # We increment the build number without commiting.
+  increment_build_number
+  # Configuration of the translations importer can be found in the
+  # `.translations` file in the root of the repository.
+  update_translations
+  # Build the application with the given configuration.
+  build(
+    configuration: 'AppStore',
+    export_options: export_options_for :appstore
+  )
+  # Upload the build to HockeyApp.
+  testflight
   # When everything succeeds, commit and push the changes.
   commit_tag_and_push
 end
@@ -97,8 +116,8 @@ private_lane :check_code_style do
 end
 
 # Run the tests.
-private_lane :run_tests do |options|
-  scan(
+private_lane :test do |options|
+  run_tests(
     workspace:     WORKSPACE,
     scheme:        SCHEME,
     clean:         true,
@@ -135,7 +154,7 @@ end
 
 # Build application
 private_lane :build do |options|
-  gym(
+  build_app(
     workspace:            WORKSPACE,
     scheme:               SCHEME,
     configuration:        options[:configuration],
@@ -154,11 +173,33 @@ private_lane :upload_to_hockey do
 end
 
 # Upload the build to TestFlight.
-private_lane :upload_to_testflight do
-  pilot(
+private_lane :testflight do
+  upload_to_testflight(
     app_identifier:  TESTFLIGHT_IDENTIFIER,
     skip_submission: true # Don't automagically submit for review.
   )
+end
+
+##################
+### Properties ###
+##################
+
+def export_options_for(configuration)
+  if configuration == :beta
+    {
+      method: 'enterprise',
+      provisioningProfiles: {
+        "com.icapps.beta" => "Example Provisioning Profile Beta"
+      }
+    }
+  elsif configuration == :appstore
+    {
+      method: 'app-store',
+      provisioningProfiles: {
+        "com.icapps" => "Example Provisioning Profile"
+      }
+    }
+  end
 end
 
 #################
