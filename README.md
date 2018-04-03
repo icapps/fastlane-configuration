@@ -22,6 +22,17 @@ Android. Please choose the one that interests you.
 There is an Apteligent script available on our [Github](https://github.com/icapps/scripts/tree/master/ruby/generate_apteligent_token) where you can generate the
 correct authentication codes.
 
+## Remarks
+
+### 'pilot' team id
+
+When specifying the team_id parameter in the 'pilot' section of your fastfile, you can't use the team id as mentioned in the Apple Developer portal.
+The correct team id can be found as follows:
+
+- Login to itunesconnect (https://itunesconnect.apple.com/)
+- Get output (JSON) from (https://itunesconnect.apple.com/WebObjects/iTunesConnect.woa/ra/user/detail)
+- You can now get your iTunes Connect ids from the associatedAccounts array with the different contentProvider objects - the entry named contentProviderId reflects the iTunes Connect id, lookup for the name value to pick the correct one
+
 ## License
 
 Copyright (c) 2015 iCapps
