@@ -74,7 +74,7 @@ lane :beta do
   # Build the application with the given configuration.
   build(
     configuration: 'Beta',
-    export_options: export_options_for :beta
+    export_options: export_options_for(:beta)
   )
   # Upload the build to HockeyApp.
   upload_to_hockey
@@ -98,7 +98,7 @@ lane :appstore do
   # Build the application with the given configuration.
   build(
     configuration: 'AppStore',
-    export_options: export_options_for :appstore
+    export_options: export_options_for(:appstore)
   )
   # Upload the build to HockeyApp.
   testflight
